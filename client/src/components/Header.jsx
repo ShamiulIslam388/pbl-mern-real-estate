@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FiSearch } from "react-icons/fi";
 
 const Header = () => {
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <header className="bg-slate-700 w-full">
       <div className="max-w-6xl mx-auto p-4 flex justify-between items-center space-x-4">
@@ -28,12 +30,22 @@ const Header = () => {
           <Link to="/about" className="hidden sm:block hover:underline">
             About
           </Link>
-          <Link
-            to="/sign-in"
-            className="text-white whitespace-nowrap hover:underline"
-          >
-            Sign In
-          </Link>
+          {currentUser ? (
+            <Link to="/profile">
+              <img
+                className="rounded-full h-7 w-7"
+                src={currentUser.avatar}
+                alt={currentUser.username}
+              />
+            </Link>
+          ) : (
+            <Link
+              to="/sign-in"
+              className="text-white whitespace-nowrap hover:underline"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
     </header>
