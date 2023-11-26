@@ -6,6 +6,7 @@ import {
   signInSuccess,
   signInFailure,
 } from "../redux/user/userSlice";
+import SignInWithGoogleButton from "../components/SIgnInWithGoogleButton";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -95,6 +96,9 @@ const SignIn = () => {
           >
             {loading ? "Loading..." : "Sign In"}
           </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <SignInWithGoogleButton />
         </div>
         <div className="mt-4 text-left">
           <p className="text-sm">

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SignInWithGoogleButton from "../components/SIgnInWithGoogleButton";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -108,6 +109,9 @@ const SignUp = () => {
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <SignInWithGoogleButton />
         </div>
         <div className="mt-4 text-left">
           <p className="text-sm">
