@@ -9,6 +9,9 @@ mongoose
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/api/user", require("./routes/user.route"));
+app.use("/api/auth", require("./routes/auth.route"));
 
 app.listen(3000, () => console.log("Server is running on port 3000"));
