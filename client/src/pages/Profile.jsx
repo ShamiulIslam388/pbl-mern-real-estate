@@ -4,6 +4,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice";
 import {
   getDownloadURL,
@@ -80,6 +83,22 @@ const Profile = () => {
         );
       }
     );
+  };
+
+  const deleteUser = async () => {
+    dispatch(deleteUserStart());
+    try {
+      const response = await fetch("/api/user/delete/" + currentUser._id, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
   };
 
   return (
@@ -184,7 +203,9 @@ const Profile = () => {
           </div>
         )}
         <div className="flex items-center justify-between mt-2.5 text-red-500 font-semibold">
-          <div className="cursor-pointer">Delete Account</div>
+          <div className="cursor-pointer" onClick={deleteUser}>
+            Delete Account
+          </div>
           <div className="cursor-pointer">Sign Out</div>
         </div>
       </form>
