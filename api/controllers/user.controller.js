@@ -1,5 +1,5 @@
-const Test = (req, res) => {
-  res.json({ message: "Test api route is working properly" });
+const updateUser = (req, res) => {
+  res.json(req.user);
 };
 
-module.exports = { Test };
+module.exports = { updateUser };

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -9,6 +10,7 @@ mongoose
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/user", require("./routes/user.route"));
