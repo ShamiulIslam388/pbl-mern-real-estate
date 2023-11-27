@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from "../redux/user/userSlice";
 import {
   getDownloadURL,
   getStorage,
@@ -11,11 +15,13 @@ import { app } from "../firebase";
 
 const Profile = () => {
   const fileRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -26,27 +32,24 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    // setLoading(true);
-    // try {
-    //   const response = await fetch("/api/auth/signup", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const data = await response.json();
-    //   if (data.success === false) {
-    //     setError(data.message);
-    //     setLoading(false);
-    //     return;
-    //   }
-    //   navigate("/sign-in");
-    // } catch (error) {
-    //   setLoading(false);
-    //   setError(error.message);
-    // }
+    dispatch(updateUserStart());
+    try {
+      const response = await fetch("/api/user/update/" + currentUser._id, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+      }
+      dispatch(updateUserSuccess(data));
+      setSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
   };
 
   useEffect(() => {
@@ -127,7 +130,7 @@ const Profile = () => {
             type="text"
             placeholder="Username"
             name="username"
-            value={formData.username}
+            defaultValue={currentUser.username}
             onChange={handleChange}
           />
         </div>
@@ -144,7 +147,7 @@ const Profile = () => {
             type="email"
             placeholder="Email"
             name="email"
-            value={formData.email}
+            defaultValue={currentUser.email}
             onChange={handleChange}
           />
         </div>
@@ -167,17 +170,23 @@ const Profile = () => {
         </div>
         <div className="flex items-center justify-between">
           <button
+            disabled={loading}
             className="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Update
+            {loading ? "Loading..." : "Update"}
           </button>
         </div>
+        {error && <div className="text-xs text-red-500 my-2.5">{error}</div>}
+        {success && (
+          <div className="text-xs text-green-700 my-2.5">
+            User is Updated Successfully
+          </div>
+        )}
         <div className="flex items-center justify-between mt-2.5 text-red-500 font-semibold">
           <div className="cursor-pointer">Delete Account</div>
           <div className="cursor-pointer">Sign Out</div>
         </div>
-        {/* {error && <div className="text-xs text-red-500 my-2.5">{error}</div>} */}
       </form>
     </div>
   );

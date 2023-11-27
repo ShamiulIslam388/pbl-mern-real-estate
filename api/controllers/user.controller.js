@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 
 const updateUser = async (req, res, next) => {
-  const { username, email, password, avatar } = req.body;
+  let { username, email, password, avatar } = req.body;
   try {
     if (req.user.id !== req.params.id)
       return next(errorHandler(401, "Unauthorized user"));
