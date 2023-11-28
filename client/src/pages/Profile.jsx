@@ -18,6 +18,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -213,6 +214,12 @@ const Profile = () => {
             {loading ? "Loading..." : "Update"}
           </button>
         </div>
+        <Link
+          to="/create-listing"
+          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded block mt-2.5 text-center"
+        >
+          Create Listing
+        </Link>
         {error && <div className="text-xs text-red-500 my-2.5">{error}</div>}
         {success && (
           <div className="text-xs text-green-700 my-2.5">
