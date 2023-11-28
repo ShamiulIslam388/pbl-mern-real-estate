@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/user", require("./routes/user.route"));
 app.use("/api/auth", require("./routes/auth.route"));
+app.use("/api/listing", require("./routes/listing.route"));
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
