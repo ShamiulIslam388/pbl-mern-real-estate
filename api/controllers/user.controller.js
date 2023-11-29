@@ -1,6 +1,7 @@
 const { errorHandler } = require("../utils/error");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
+const Listing = require("../models/listing.model");
 
 const updateUser = async (req, res, next) => {
   let { username, email, password, avatar } = req.body;
@@ -43,4 +44,17 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { updateUser, deleteUser };
+const getUserListing = async (req, res, next) => {
+  if (req.params.id === req.user.id) {
+    try {
+      const listings = await Listing.find({ userRef: req.params.id });
+      return res.status(200).json(listings);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    return next(errorHandler(401, "Unauthorized user"));
+  }
+};
+
+module.exports = { updateUser, deleteUser, getUserListing };
