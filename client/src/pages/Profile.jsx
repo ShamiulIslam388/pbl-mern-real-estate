@@ -29,6 +29,9 @@ const Profile = () => {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [showListingLoading, setShowListingLoading] = useState(false);
+  const [listings, setListings] = useState([]);
 
   const handleChange = (e) => {
     setFormData({
@@ -116,6 +119,25 @@ const Profile = () => {
       dispatch(signOutUserSuccess(data));
     } catch (error) {
       dispatch(signOutUserFailure(error.message));
+    }
+  };
+
+  const showlistingHandler = async () => {
+    try {
+      setShowListingLoading(true);
+      setShowListingError(false);
+      const response = await fetch("/api/user/listings/" + currentUser._id);
+      const data = await response.json();
+      if (data.success === false) {
+        setShowListingError(data.message);
+        setShowListingLoading(false);
+        return;
+      }
+      setListings(data);
+      setShowListingLoading(false);
+    } catch (error) {
+      setShowListingError(error.message);
+      setShowListingLoading(false);
     }
   };
 
@@ -235,6 +257,50 @@ const Profile = () => {
           </div>
         </div>
       </form>
+      <button
+        disabled={showListingLoading}
+        className="text-green-700 font-semibold"
+        onClick={showlistingHandler}
+      >
+        {showListingLoading ? "Lisitng Loading..." : "Show Listing"}
+      </button>
+      {showListingError && (
+        <p className="text-red-700 font-semibold mt-1.5">
+          Error in showing Listings
+        </p>
+      )}
+
+      {listings && listings.length > 0 && (
+        <div className="text-3xl font-semibold pb-4">Your Listings</div>
+      )}
+      {listings &&
+        listings.length > 0 &&
+        listings.map((listing) => (
+          <div
+            key={listing._id}
+            className="w-full sm:w-96 flex items-center justify-between gap-4 p-3 mb-1.5 border rounded"
+          >
+            <img
+              src={listing.imageUrls[0]}
+              alt="image listing"
+              className="w-20 object-contain"
+            />
+            <Link
+              to={`/listing/${listing._id}`}
+              className="text-sm font-semibold text-left hover:underline truncate"
+            >
+              {listing.name}
+            </Link>
+            <div className="flex flex-col gap-2">
+              <button className="text-green-700 font-semibold text-sm">
+                Edit
+              </button>
+              <button className="text-red-700 font-semibold text-sm">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
     </div>
   );
 };
